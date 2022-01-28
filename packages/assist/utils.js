@@ -5,7 +5,9 @@ export { Duplex } from 'node:stream'
 
 export const escape = (value) => new RegExp(value.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')
 
-export const fetch = globalThis.fetch || await import('@astropub/webapi').then(exports => exports.fetch)
+export const fetch = await (async () => {
+	return globalThis.fetch || await import('@astropub/webapi').then(exports => exports.fetch)
+})()
 
 export const getFileName = (value) => String(String(value).split('/').pop() || '') || 'file.bin'
 
