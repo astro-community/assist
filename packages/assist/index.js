@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Duplex, escape, getFileName, getFileExtension, getFileType, getHash, getReady, mkdir, pathToFileURL, withTrailingSlash, writeFile } from './utils.js'
+import { Duplex, escape, fetch, getFileName, getFileExtension, getFileType, getHash, getReady, mkdir, pathToFileURL, withTrailingSlash, writeFile } from './utils.js'
 
 /** @type {import('.').Assist} */
 export class Assist {

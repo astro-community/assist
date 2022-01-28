@@ -1,7 +1,7 @@
 {
   "name": "@astropub/assist-demo",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "start": "astro dev",
@@ -9,7 +9,8 @@
     "serve": "astro preview"
   },
   "devDependencies": {
-    "@astropub/assist": "0.1.1",
+    "@astropub/assist": "0.1.2",
+    "@astropub/webapi": "^0.10.8",
     "astro": "latest"
   }
 }

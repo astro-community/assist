@@ -2,12 +2,9 @@ import { createHash } from 'node:crypto'
 export { mkdir, writeFile } from 'node:fs/promises'
 export { pathToFileURL } from 'node:url'
 export { Duplex } from 'node:stream'
+export { fetch } from '@astropub/webapi'
 
 export const escape = (value) => new RegExp(value.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')
-
-export const fetch = await (async () => {
-	return globalThis.fetch || await import('@astropub/webapi').then(exports => exports.fetch)
-})()
 
 export const getFileName = (value) => String(String(value).split('/').pop() || '') || 'file.bin'
 
@@ -359,3 +356,5 @@ export const typesByExtension = Object.entries(extensionsByType).reduce(
 	},
 	{}
 )
+
+/** @typedef {typeof globalThis.fetch} fetch */
