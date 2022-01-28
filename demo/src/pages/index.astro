@@ -1,0 +1,14 @@
+---
+import Image from '../components/Image.astro'
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Welcome to Astro</title>
+	</head>
+	<body>
+		<h1>Welcome to Astro</h1>
+		<Image src={Astro.resolve('kitten.jpg')} alt="kitten" width="600" />
+	</body>
+</html>

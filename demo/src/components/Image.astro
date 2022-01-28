@@ -1,0 +1,18 @@
+---
+import { addAsset } from '@astropub/assist'
+
+export interface Props {
+	src: string | URL
+	alt: string
+	width?: string | number
+	height?: string | number
+}
+
+const { src, alt, width, height } = {
+	alt: '',
+	...Astro.props
+} as Props
+
+const asset = addAsset(Object(src).pathname || src)
+---
+<img src={asset} alt={alt} width={width} height={height} />
