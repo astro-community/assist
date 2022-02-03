@@ -11,7 +11,7 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "utils.js"
+    "lib"
   ],
   "keywords": [
     "asset",

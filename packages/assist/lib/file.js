@@ -1,44 +1,27 @@
 import { createHash } from 'node:crypto'
-export { mkdir, writeFile } from 'node:fs/promises'
-export { pathToFileURL } from 'node:url'
-export { Duplex } from 'node:stream'
-export { fetch } from '@astropub/webapi'
 
-export const escape = (value) => new RegExp(value.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'), 'g')
+/** Returns the hash for the given value (sha256 as the first 8 hex chars). */
+export const getHash = (/** @type {string} */ value) => createHash('sha256').update(value).digest('hex').slice(0, 8)
 
-export const getFileName = (value) => String(String(value).split('/').pop() || '') || 'file.bin'
+/** Returns the filename for the given path (`file.bin`). */
+export const getName = (/** @type {string} */ path) => path.split('/').at(-1)
 
-export const getFileBase = (value) => getFileName(value).split('.').shift() || 'file'
+/** Returns the file base for the given path (`file`). */
+export const getBase = (/** @type {string} */ path) => getName(path).split('.').slice(0, -1).join('.')
 
-export const getFileExtension = (value) => getFileName(value).split('.').slice(1).join('.') || 'bin'
+/** Returns the file extension from the given path (`bin`). */
+export const getExtension = (/** @type {string} */ path) => getName(path).replace(/^[^.]+\.?/, '')
 
-export const getFileType = (value) => (typesByExtension[getFileExtension(value)] || ['application/octet-stream'])[0]
+/** Returns the file type from the given extension. */
+export const getType = (/** @type {string} */ extension) => typeByExtension[extension] || 'application/octet-stream'
 
-export const getHash = (value) => createHash('sha1').update(String(value)).digest('hex')
+/** Returns the posix-normalized path from the given path. */
+export const getPath = (/** @type {URL | string} */ path) => isURL(path) ? path.pathname : path.replace(/\\+/g, '/').replace(/^(?=[A-Za-z]:\/)/, '/').replace(/%/g, '%25').replace(/\n/g, '%0A').replace(/\r/g, '%0D').replace(/\t/g, '%09')
 
-/** @type {{ (): import('.').Ready }} */
-export const getReady = () => {
-	let resolve
+/** @type {{ (path: URL | string): path is URL }} */
+export const isURL = (/** @type {URL | string} */ path) => URL.prototype.isPrototypeOf(path)
 
-	const ready = new Promise((resolver) => {
-		resolve = () => {
-			resolver()
-
-			ready.resolved = true
-		}
-	})
-
-	ready.resolve = resolve
-	ready.resolved = false
-
-	return ready
-}
-
-export const withTrailingSlash = (value) => String(value).replace(/\/?$/, '/')
-
-export const resolve = (valueA, valueB) => new URL(valueB, new URL(valueA)).pathname
-
-export const extensionsByType = {
+const extensionsByType = {
 	'application/andrew-inset': ['ez'],
 	'application/applixware': ['aw'],
 	'application/atom+xml': ['atom'],
@@ -114,7 +97,6 @@ export const extensionsByType = {
 	'application/n-quads': ['nq'],
 	'application/n-triples': ['nt'],
 	'application/node': ['cjs'],
-	'application/octet-stream': ['bin', 'dms', 'lrf', 'mar', 'so', 'dist', 'distz', 'pkg', 'bpk', 'dump', 'elc', 'deploy', 'exe', 'dll', 'deb', 'dmg', 'iso', 'img', 'msi', 'msp', 'msm', 'buffer'],
 	'application/oda': ['oda'],
 	'application/oebps-package+xml': ['opf'],
 	'application/ogg': ['ogx'],
@@ -344,17 +326,13 @@ export const extensionsByType = {
 	'video/webm': ['webm']
 }
 
-export const typesByExtension = Object.entries(extensionsByType).reduce(
-	(typesByExtension, [type, extensions]) => {
+const typeByExtension = Object.entries(extensionsByType).reduce(
+	(typeByExtension, [type, extensions]) => {
 		for (const extension of extensions) {
-			const types = typesByExtension[extension] = typesByExtension[extension] || []
-
-			types.push(type)
+			typeByExtension[extension] = type
 		}
 
-		return typesByExtension
+		return typeByExtension
 	},
-	{}
+	/** @type {Record<string, string>} */ ({})
 )
-
-/** @typedef {typeof globalThis.fetch} fetch */
